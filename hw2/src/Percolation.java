@@ -25,6 +25,7 @@ public class Percolation {
 
         for (int i = 0; i < size; i++) {
             wq.union(i, N);
+            wq.union(size * size - 1 - i, N + 1);
         }
     }
 
@@ -34,6 +35,11 @@ public class Percolation {
      * @param col the according column
      */
     public void open(int row, int col) {
+        if ((row < 0 || row > size - 1)
+        || (col < 0 || col > size - 1)) {
+            throw new IllegalArgumentException("row and col needed to be non-negative and" +
+                    "smaller the maximum of the index");
+        }
         int presentSite = grid[row][col];
         if (presentSite == 0) {
             presentSite = 1;
@@ -53,6 +59,11 @@ public class Percolation {
      * @return the status of the site
      */
     public boolean isOpen(int row, int col) {
+        if ((row < 0 || row > size - 1)
+                || (col < 0 || col > size - 1)) {
+            throw new IllegalArgumentException("row and col needed to be non-negative and" +
+                    "smaller the maximum of the index");
+        }
         return grid[row][col] == 1;
     }
 
@@ -63,6 +74,11 @@ public class Percolation {
      * @return the full status of the size
      */
     public boolean isFull(int row, int col) {
+        if ((row < 0 || row > size - 1)
+                || (col < 0 || col > size - 1)) {
+            throw new IllegalArgumentException("row and col needed to be non-negative and" +
+                    "smaller the maximum of the index");
+        }
         return wq.connected(size * size - 2, grid[row][col]);
     }
 
@@ -79,11 +95,7 @@ public class Percolation {
      * @return where the system percolate
      */
     public boolean percolates() {
-        for (int i = 0; i < size; i++) {
-            wq.union(size * size - 1, size * size - 3 - i);
-        }
         return wq.connected(size * size - 1, size * size - 2);
-
     }
 
     /**
@@ -93,6 +105,11 @@ public class Percolation {
      * @return the 1D index of the nearBy, if none return -1
      */
     public int getNearBy(int row, int col) {
+        if ((row < 0 || row > size - 1)
+                || (col < 0 || col > size - 1)) {
+            throw new IllegalArgumentException("row and col needed to be non-negative and" +
+                    "smaller the maximum of the index");
+        }
         int presentSite = grid[row][col];
         if (presentSite == 0) {
             return -1;
@@ -119,6 +136,11 @@ public class Percolation {
     }
 
     public int xyTo1D(int x, int y) {
+        if ((x < 0 || x > size - 1)
+                || (y < 0 || y > size - 1)) {
+            throw new IllegalArgumentException("row and col needed to be non-negative and" +
+                    "smaller the maximum of the index");
+        }
         return size * x + y;
     }
 }
