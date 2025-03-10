@@ -2,7 +2,8 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 
 public class Percolation {
-    private WeightedQuickUnionUF wq;
+    private WeightedQuickUnionUF fullUF;
+    private WeightedQuickUnionUF percolationUF;
     private int[][] grid;
     private int size;
     private int openSiteNumber;
@@ -14,7 +15,8 @@ public class Percolation {
     public Percolation(int N) {
         size = N;
         grid = new int[size][size];
-        wq = new WeightedQuickUnionUF(N + 2);
+        fullUF = new WeightedQuickUnionUF(N * N + 1);
+        percolationUF = new WeightedQuickUnionUF(N * N + 2);
         openSiteNumber = 0;
 
         for (int i = 0; i < size; i++) {
@@ -24,8 +26,9 @@ public class Percolation {
         }
 
         for (int i = 0; i < size; i++) {
-            wq.union(i, N);
-            wq.union(size * size - 1 - i, N + 1);
+            fullUF.union(i, N * N);
+            percolationUF.union(i, N * N);
+            percolationUF.union(size * size - 1 - i, N * N + 1);
         }
     }
 
@@ -48,7 +51,7 @@ public class Percolation {
         if (getNearBy(row, col) != -1) {
             int nearIndex = getNearBy(row, col);
             int thisIndex = xyTo1D(row, col);
-            wq.union(thisIndex, nearIndex);
+            percolationUF.union(thisIndex, nearIndex);
         }
     }
 
@@ -79,7 +82,8 @@ public class Percolation {
             throw new IllegalArgumentException("row and col needed to be non-negative and" +
                     "smaller the maximum of the index");
         }
-        return wq.connected(size * size - 2, grid[row][col]);
+        int result = xyTo1D(row, col);
+        return fullUF.connected(size * size - 2, result);
     }
 
     /**
@@ -95,7 +99,7 @@ public class Percolation {
      * @return where the system percolate
      */
     public boolean percolates() {
-        return wq.connected(size * size - 1, size * size - 2);
+        return percolationUF.connected(size * size - 1, size * size - 2);
     }
 
     /**
