@@ -34,7 +34,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
             n.value = value;
             return n;
         }
-        size++;
         return n;
     }
 
@@ -47,14 +46,17 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public void put(K key, V value) {
+        if (!containsKey(key)) {
+            size++;
+        }
         item =  putHelper(item, key, value);
     }
 
     @Override
     public V get(K key) {
-//        if (!containsKey(key)) {
-//            return null;
-//        }
+        if (!containsKey(key)) {
+            return null;
+        }
         return getHelper(item, key).value;
     }
 
@@ -73,17 +75,25 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public boolean containsKey(K key) {
+        if (size == 0) {
         return false;
+        }
+        Node result = getHelper(item, key);
+        if (result == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void clear() {
-
+        item = null;
+        size = 0;
     }
 
     @Override
@@ -99,31 +109,5 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     @Override
     public Iterator<K> iterator() {
         return null;
-    }
-
-    public void printInOrder() {
-
-    }
-
-    @Test
-    public void putTest() {
-        BSTMap<Integer, Integer> integers = new BSTMap<>();
-        integers.put(10, 1);
-        integers.put(10, 2);
-        integers.put(12, 3);
-        integers.put(11 ,4);
-        assertThat(integers.size).isEqualTo(3);
-    }
-
-    @Test
-    public void getTest() {
-        BSTMap<Integer, Integer> integers = new BSTMap<>();
-        integers.put(10, 1);
-        integers.put(9, 2);
-        integers.put(8, 3);
-        integers.put(11, 4);
-
-        assertThat(integers.get(11)).isEqualTo(4);
-        assertThat(integers.get(8)).isEqualTo(3);
     }
 }
