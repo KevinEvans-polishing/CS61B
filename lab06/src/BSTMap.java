@@ -1,9 +1,10 @@
 import edu.princeton.cs.algs4.BST;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Stack;
+import org.apache.bcel.generic.ANEWARRAY;
 import org.junit.jupiter.api.Test;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -37,9 +38,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         return n;
     }
 
-    public int compareItem(BSTMap<K, V> other) {
-        return this.item.key.compareTo(other.item.key);
-    }
 
     private Node item;
     private int size;
@@ -98,16 +96,82 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public Set<K> keySet() {
-        return Set.of();
+        Iterator<K> iterator = iterator();
+        Set<K> ks = new HashSet<>();
+
+        while (iterator.hasNext()) {
+            K next = iterator.next();
+            ks.add(next);
+        }
+        return ks;
     }
 
     @Override
     public V remove(K key) {
-        return null;
+        item = remove(item, key);
+        return get(key);
+    }
+
+    private Node remove(Node item, K key) {
+        if (item == null) {
+            return null;
+        }
+        if (key.compareTo(item.key) < 0) {
+            item.left = remove(item.left, key);
+        } else if (key.compareTo(item.key) > 0) {
+            item.right = remove(item.right, key);
+        } else {
+            if (item.left == null) {
+                return item.right;
+            } else if (item.right == null) {
+                return item.left;
+            }
+
+            Node successor = findMax(item.left);
+            item.key = successor.key;
+            item.left = remove(item.left, successor.key);
+        }
+        return item;
+    }
+
+    private Node findMax(Node item) {
+        while (item.right != null) {
+            item = item.right;
+        }
+        return item;
     }
 
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return new BSTMapIterator(item);
+    }
+
+    private class BSTMapIterator implements Iterator<K>{
+        private Stack<Node> stack;
+
+        public BSTMapIterator(Node item) {
+            stack = new Stack<>();
+            pushAllLeft(item);
+        }
+
+        private void pushAllLeft(Node item) {
+            while (item != null) {
+                stack.push(item);
+                item = item.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return stack.isEmpty();
+        }
+
+        @Override
+        public K next() {
+            Node i = stack.pop();
+            pushAllLeft(i.right);
+            return i.key;
+        }
+
     }
 }
