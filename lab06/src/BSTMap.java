@@ -1,4 +1,6 @@
 import edu.princeton.cs.algs4.Stack;
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
@@ -251,6 +253,58 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
             pushAllLeft(i.right);
             return i.key;
         }
+    }
 
+    /**
+     * Morris Traversal
+     * @param root the root node
+     */
+    public void inorder(Node root) {
+        Node current = root;
+
+        while (current != null) {
+            if (current.left == null) {
+                System.out.print(current.key + " ");
+                current = current.right;
+            } else {
+                // 中序遍历所需的前驱节点
+                Node predecessor = current.left;
+                // 找到最右的节点作为前驱
+                while (predecessor.right != null && predecessor.right != current) {
+                    predecessor = predecessor.right;
+                }
+                // 如果前驱节点的右侧为空，说明还没建立回到current的链接，
+                // 进而说明还没有遍历current的左子树
+                // 那么就先遍历左子树(中序遍历先遍历左子树)
+                if (predecessor.right == null) {
+                    predecessor.right = current;
+                    current = current.left;
+                } else {
+                    // 说明已经建立了链接，左子树遍历完成
+                    // 接下来遍历右子树
+                    // 先讲链接销毁，使树的结构恢复
+                    predecessor.right = null;
+                    System.out.print(current.key + " ");
+                    current = current.right;
+                }
+            }
+        }
+    }
+
+    // 想要用莫里斯遍历来实现iterator的next()
+    // 只需将inorder()中的打印语句更换为return语句
+    public static void main(String[] args) {
+        BSTMap<Integer, Integer> integers = new BSTMap<>();
+        integers.put(10, 1);
+        integers.put(5, 2);
+        integers.put(-2, 3);
+        integers.put(2, 4);
+        integers.put(-1, 5);
+        integers.put(6, 6);
+        integers.put(8, 7);
+        integers.put(30, 8);
+        integers.put(40, 9);
+
+        integers.inorder(integers.item);
     }
 }
