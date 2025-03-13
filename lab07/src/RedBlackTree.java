@@ -50,7 +50,9 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @param node
      */
     void flipColors(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
+        node.left.isBlack = true;
+        node.right.isBlack = true;
+        node.isBlack = false;
     }
 
     /**
@@ -61,8 +63,29 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        // 重构指针
+        var oldNode = node;
+        node = node.left;
+        oldNode.left = node.right;
+        node.right = oldNode;
+
+        // 互换节点颜色
+        boolean color = node.isBlack;
+        node.isBlack = oldNode.isBlack;
+        oldNode.isBlack = color;
+
+        // 更新parent节点的子节点
+        var parent = findParent(oldNode.item);
+        if (parent == null) {
+            root = node;
+        } else {
+            if (parent.left != null && parent.left.item == oldNode.item) {
+                parent.left = node;
+            } else {
+                parent.right = node;
+            }
+        }
+        return root;
     }
 
     /**
@@ -73,8 +96,26 @@ public class RedBlackTree<T extends Comparable<T>> {
      * @return
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
-        // TODO: YOUR CODE HERE
-        return null;
+        var oldNode  = node;
+        node = oldNode.right;
+        oldNode.right = node.left;
+        node.left = oldNode;
+
+        boolean color = node.isBlack;
+        node.isBlack = oldNode.isBlack;
+        oldNode.isBlack = color;
+
+        var parent = findParent(oldNode.item);
+        if (parent == null) {
+            root = node;
+        } else {
+            if (parent.left != null && parent.left.item == oldNode.item) {
+                parent.left = node;
+            } else {
+                parent.right = node;
+            }
+        }
+        return root;
     }
 
     /**
@@ -106,16 +147,67 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
         // TODO: Insert (return) new red leaf node.
-
+        RBTreeNode<T> newNode = new RBTreeNode<>(false, item);
         // TODO: Handle normal binary search tree insertion.
-
+        node = insertHelper(node, newNode);
         // TODO: Rotate left operation
-
+        var parent = findParent(item);
+        if (parent == null) {
+            return newNode;
+        }
+        if ((parent.left == null || parent.left.isBlack) && parent.right != null && parent.right.item == item) {
+            node = rotateLeft(parent);
+            parent = findParent(parent.item);
+        }
         // TODO: Rotate right operation
-
+        if (isRed(parent) && isRed(parent.left)) {
+            node = rotateRight(findParent(parent.item));
+        }
         // TODO: Color flip
-
-        return null; //fix this return statement
+        while (parent != null && isRed(parent.left) && isRed(parent.right)) {
+            flipColors(parent);
+            parent = findParent(parent.item);
+        }
+        // 右转累积效应修正
+        var current = root;
+        while (current.left != null) {
+            if (isRed(current) && isRed(current.left)) {
+                node = rotateRight(findParent(current.item));
+                break;
+            }
+            current = current.left;
+        }
+        while (parent != null && isRed(parent.left) && isRed(parent.right)) {
+            flipColors(parent);
+            parent = findParent(parent.item);
+        }
+        return node; //fix this return statement
     }
 
+    private RBTreeNode<T> insertHelper(RBTreeNode<T> node, RBTreeNode<T> newNode) {
+        if (node == null) {
+            return newNode;
+        } else if (node.item.compareTo(newNode.item) > 0) {
+            node.left = insertHelper(node.left, newNode);
+        } else if (node.item.compareTo(newNode.item) < 0) {
+            node.right = insertHelper(node.right, newNode);
+        }
+        return node;
+    }
+    private RBTreeNode<T> findParent(T item) {
+        RBTreeNode<T> parent = null;
+        var current = root;
+        while (current != null) {
+            if (current.item == item) {
+                return parent;
+            }
+            parent = current;
+            if (current.item.compareTo(item) > 0) {
+                current = current.left;
+            } else if (current.item.compareTo(item) < 0) {
+                current = current.right;
+            }
+        }
+        return null;
+    }
 }

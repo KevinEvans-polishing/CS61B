@@ -299,12 +299,12 @@ public class TestRedBlackTree {
         RedBlackTree<Integer> rbtree = new TestableRedBlackTree();
 
         rbtree.insert(5);
-        rbtree.insert(11);
-        rbtree.insert(3);
+        rbtree.insert(11);// l 1
+        rbtree.insert(3);// r 1
         rbtree.insert(9);
-        rbtree.insert(7);
+        rbtree.insert(7);// r 2
         rbtree.insert(1);
-        rbtree.insert(2);
+        rbtree.insert(2); // l 2 r3
 
         /*
         LLRB Tree Representation:
