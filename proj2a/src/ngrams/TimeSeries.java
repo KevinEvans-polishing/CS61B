@@ -110,10 +110,13 @@ public class TimeSeries extends TreeMap<Integer, Double> {
         return newTs;
     }
 
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
 
     private int getMinStartYear(TimeSeries ts) {
+        if (this.isEmpty() && !ts.isEmpty()) {
+            return ts.firstKey();
+        } else if (ts.isEmpty() && !this.isEmpty()) {
+            return ts.firstKey();
+        }
         int thisYear = this.firstKey();
         int tsYear = ts.firstKey();
         if (thisYear - tsYear > 0) {
@@ -124,6 +127,11 @@ public class TimeSeries extends TreeMap<Integer, Double> {
     }
 
     private int getMaxEndYear(TimeSeries ts) {
+        if (this.isEmpty() && !ts.isEmpty()) {
+            return ts.lastKey();
+        } else if (ts.isEmpty() && !this.isEmpty()) {
+            return this.lastKey();
+        }
         int thisYear = this.lastKey();
         int tsYear = ts.lastKey();
         if (thisYear - tsYear > 0) {
