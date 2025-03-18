@@ -1,9 +1,6 @@
 package hashmap;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  A hash table-backed Map implementation.
@@ -12,7 +9,6 @@ import java.util.Set;
  *  @author Hector
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
-
     /**
      * Protected helper class to store key/value pairs
      * The protected qualifier allows subclass access
@@ -114,7 +110,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             }
             // 如果key不存在
             size++;
-            if ((double) size / capacity > loadFactor) {
+            if (1.0 * size / capacity > loadFactor) {
                 resize();
             }
             // 加入新节点
@@ -165,20 +161,77 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
-        //return Set.of();
+        TreeSet<K> ks = new TreeSet<>();
+        for (Collection<Node> nodes : buckets) {
+            Iterator<Node> iterator = nodes.iterator();
+            while (iterator.hasNext()) {
+                Node node = iterator.next();
+                ks.add(node.key);
+            }
+        }
+        return ks;
     }
 
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
-        //return null;
+        V value;
+        for (Collection<Node> nodes : buckets) {
+            for (Node node : nodes) {
+                if (node.key.equals(key)) {
+                    value = node.value;
+                    nodes.remove(node);
+                    return value;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
-        //return null;
+       return new MyHashMapIterator<K>(buckets);
+    }
+
+    private class MyHashMapIterator<K> implements Iterator<K> {
+        private final Collection<Node>[] buckets;
+        private int thisBucketIndex = 0;
+        private Iterator<Node> nodeIterator = null;
+
+        public MyHashMapIterator(Collection<Node>[] buckets) {
+            this.buckets = buckets;
+            moveToNextNonEmptyBucket();
+        }
+
+        // 移动到下一个非空桶
+        private boolean moveToNextNonEmptyBucket() {
+            while (thisBucketIndex < buckets.length) {
+                Collection<Node> bucket = buckets[thisBucketIndex];
+                if (bucket != null && !bucket.isEmpty()) {
+                    nodeIterator = bucket.iterator();
+                    thisBucketIndex++;
+                    return true;
+                }
+                thisBucketIndex++;
+            }
+            nodeIterator = null;
+            return false;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (nodeIterator != null && nodeIterator.hasNext()) {
+                return true;
+            }
+            return moveToNextNonEmptyBucket();
+        }
+
+        @Override
+        public K next() {
+            if (!hasNext()) {
+                return null;
+            }
+            return (K) nodeIterator.next().key;
+        }
     }
 
     private void resize() {
@@ -190,9 +243,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
         // 在HashTable上重新分布Node
         for (Collection<Node> nodes : buckets) {
-            for (Node node : nodes) {
-                int hashCode = node.hashCode();
-                int index = Math.floorMod(hashCode, capacity);
+            Iterator<Node> iterator = nodes.iterator();
+            while (iterator.hasNext()) {
+                var node =  iterator.next();
+                int index = Math.floorMod(node.hashCode(), capacity);
                 newBuckets[index].add(node);
             }
         }
