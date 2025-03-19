@@ -1,9 +1,8 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.antlr.v4.runtime.tree.Tree;
+
+import java.util.*;
 
 /** 整个类都是用来辅助寻找下义词集的
  * 所以不关心是否有相应的构造函数
@@ -25,6 +24,25 @@ public class HyponymSet {
         // 3. 将id集合映射回word集合
         // 注意某些id对应的节点不只一个词
         // 以及去重问题
-        return G.backToStringSet(hyponymsOfInteger);
+        var setOfString = G.backToStringSet(hyponymsOfInteger);
+        // 拆分去重
+        return perfectStringSet(setOfString);
+    }
+
+    private static Set<String> perfectStringSet(Set<String> origin) {
+        TreeSet<String> update = new TreeSet<>();
+        for (String string : origin) {
+            // 存在空格则进行分割
+            // 然后填入新的不重复有序集合
+            if (string.contains(" ")) {
+                String[] words = string.split(" ");
+                for (String word : words) {
+                    update.add(word);
+                }
+            } else {
+                update.add(string);
+            }
+        }
+        return update;
     }
 }
