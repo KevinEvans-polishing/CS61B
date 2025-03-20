@@ -15,10 +15,24 @@ public class Graph {
     private class Node {
         private int id;
         private String string;
+        private boolean isMarked;
 
         public Node(int id, String string) {
             this.id = id;
             this.string = string;
+            isMarked = false;
+        }
+
+        public void mark() {
+            isMarked = true;
+        }
+
+        public void unMark() {
+            isMarked = false;
+        }
+
+        public boolean isMarked() {
+            return isMarked;
         }
     }
 
@@ -99,6 +113,42 @@ public class Graph {
         return strings;
     }
 
+    public TreeSet<Integer> bfs(int index) {
+        unMarkEveryNode();
+        TreeSet<Integer> integers = new TreeSet<>();
+        ArrayDeque<Node> fringe = new ArrayDeque<>();
+        fringe.add(lists[index].getFirst());
+        lists[index].getFirst().mark();
+        integers.add(index);
+
+        while (!fringe.isEmpty()) {
+            Node thisNode = fringe.poll();
+            for (Node node : adj(thisNode.id)) {
+                if (!node.isMarked()) {
+                    node.mark();
+                    integers.add(node.id);
+                    fringe.add(node);
+                }
+            }
+        }
+        return integers;
+    }
+
+    public Iterable<Node> adj(int index) {
+        ArrayList<Node> copy = new ArrayList<>();
+        for (Node node : lists[index]) {
+            copy.add(node);
+        }
+        copy.removeFirst();
+        return copy;
+    }
+
+    public void unMarkEveryNode() {
+        for (int i = 0; i < verticesNumber; i++) {
+            lists[i].getFirst().unMark();
+        }
+    }
+
     @Test
     public void getTest() {
         Graph graph = new Graph();
@@ -110,6 +160,6 @@ public class Graph {
         graph.addEdge(0, 2);
         graph.addEdge(1, 3);
 
-        graph.getEverythingFromTheIndexList(0);
+        assertThat(graph.bfs(0)).containsExactly(0, 1, 2, 3).inOrder();
     }
 }

@@ -44,7 +44,7 @@ public class HyponymSet {
         // 注意需要递归取出
         // 因为List中元素对应的index所指向的list不一定为空
         for (int index : indexList) {
-            hyponymsOfInteger.addAll(G.getEverythingFromTheIndexList(index));
+            hyponymsOfInteger.addAll(G.bfs(index));
         }
         // 3. 将id集合映射回word集合
         // 注意某些id对应的节点不只一个词
