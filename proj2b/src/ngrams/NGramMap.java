@@ -65,6 +65,30 @@ public class NGramMap {
         }
     }
 
+    public NGramMap(String wordsFilename) {
+        TimeSeries ts = new TimeSeries();
+        int key;
+        double value;
+        String lastWord = " ";
+        In in = new In(wordsFilename);
+        while (in.hasNextLine()) {
+            String nextLine = in.readLine();
+            // 分割
+            String[] spiltLine = nextLine.split("\t");
+            String thisWord  = spiltLine[0];
+            key = Integer.parseInt(spiltLine[1]);
+            value = Double.parseDouble(spiltLine[2]);
+            if (!thisWord.equals(lastWord)) {
+                ts = new TimeSeries();
+                lastWord = thisWord;
+            }
+            ts.put(key, value);
+            if (wordsRecord != null) {
+                wordsRecord.put(spiltLine[0], ts);
+            }
+        }
+    }
+
     /**
      * Provides the history of WORD between STARTYEAR and ENDYEAR, inclusive of both ends. The
      * returned TimeSeries should be a copy, not a link to this NGramMap's TimeSeries. In other
