@@ -154,8 +154,8 @@ public class Graph {
         Graph graph = new Graph();
         graph.createNode(0, "hello");
         graph.createNode(1, "hi");
-        graph.createNode(2, "bitch");
-        graph.createNode(3, "fuck");
+        graph.createNode(2, "thank");
+        graph.createNode(3, "sorry");
         graph.addEdge(0, 1);
         graph.addEdge(0, 2);
         graph.addEdge(1, 3);
