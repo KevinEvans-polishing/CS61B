@@ -143,7 +143,6 @@ public class Tetris {
         // Keeps track of the current number lines cleared
         int linesCleared = 0;
 
-        // TODO: Check how many lines have been completed and clear it the rows if completed.
         // 对完成的行进行计数
         // 先不进行移动与更新
         TETile[][] tiles1 = new TETile[GAME_HEIGHT][WIDTH];
@@ -174,7 +173,6 @@ public class Tetris {
                 tiles[j][i] = tiles1[i][j];
             }
         }
-        // TODO: Increment the score based on the number of lines cleared.
         incrementScore(linesCleared);
         fillAux();
     }
@@ -186,7 +184,6 @@ public class Tetris {
     public void runGame() {
         resetActionTimer();
 
-        // TODO: Set up your game loop. The game should keep running until the game is over.
         // Use helper methods inside your game loop, according to the spec description.
         while (!isGameOver()) {
             if (currentTetromino == null) {
@@ -208,7 +205,6 @@ public class Tetris {
      * Renders the score using the StdDraw library.
      */
     private void renderScore() {
-        // TODO: Use the StdDraw library to draw out the score.
         setPenColor(255, 255, 255);
         text(7, 19, String.valueOf(score));
         show();
