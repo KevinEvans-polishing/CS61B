@@ -114,4 +114,31 @@ public class TestBSTMap {
         assertThat(b.get("b")).isEqualTo("provolone");
     }
 
+    @org.junit.jupiter.api.Test
+    public void putTest() {
+        BSTMap<Integer, Integer> integers = new BSTMap<>();
+        integers.put(10, 1);
+        integers.put(10, 2);
+        integers.put(12, 3);
+        integers.put(11 ,4);
+        assertThat(integers.size()).isEqualTo(3);
+    }
+
+    @org.junit.jupiter.api.Test
+    public void getTest() {
+        BSTMap<Integer, Integer> integers = new BSTMap<>();
+        integers.put(10, 1);
+        integers.put(9, 2);
+        integers.put(8, 3);
+        integers.put(11, 4);
+
+        assertThat(integers.get(11)).isEqualTo(4);
+        assertThat(integers.get(8)).isEqualTo(3);
+    }
+
+    @org.junit.jupiter.api.Test
+    public void getNullTest() {
+        BSTMap<Integer, Integer> integers = new BSTMap<>();
+        assertThat(integers.get(8)).isEqualTo(null);
+    }
 }

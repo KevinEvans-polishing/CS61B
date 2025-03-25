@@ -9,6 +9,9 @@ import utils.FileUtils;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import static utils.FileUtils.readFile;
+import static utils.FileUtils.writeFile;
+
 /**
  * Am implementation of Conway's Game of Life using StdDraw.
  * Credits to Erik Nelson, Jasmine Lin and Elana Ho for
@@ -236,16 +239,55 @@ public class GameOfLife {
         TETile[][] nextGen = new TETile[width][height];
         // The board is filled with Tileset.NOTHING
         fillWithNothing(nextGen);
+        // 遍历检查tiles节点，判断状态
+        // 将下一代结果写入nextGen
+        TETile currentTile;
+        int number;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                currentTile = tiles[x][y];
+                number = numberOfLivingNeighbour(tiles, x, y);
+                if (currentTile.equals(Tileset.CELL)) {
+                    if (number < 2) {
+                        nextGen[x][y] = Tileset.NOTHING;
+                    } else if (number == 2 || number == 3) {
+                        nextGen[x][y] = Tileset.CELL;
+                    } else {
+                        nextGen[x][y] = Tileset.NOTHING;
+                    }
+                } else {
+                    if (number == 3) {
+                        nextGen[x][y] = Tileset.CELL;
+                    }
+                }
+            }
+        }
+        return nextGen;
+    }
 
-        // TODO: Implement this method so that the described transitions occur.
-        // TODO: The current state is represented by TETiles[][] tiles and the next
-        // TODO: state/evolution should be returned in TETile[][] nextGen.
+    private int numberOfLivingNeighbour(TETile[][] tiles, int x ,int y) {
+        int[][] directions = {
+                {-1, 1}, {0, 1},
+                {1, 1}, {1, 0},
+                {1, -1}, {0, -1},
+                {-1, -1}, {-1, 0}
+        };
+        int livingNumber = 0;
 
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
 
-
-
-        // TODO: Returns the next evolution in TETile[][] nextGen.
-        return null;
+            // 筛选正确范围的newX与newY
+            // 然后判断这些邻居cell的状态并计数
+            if (newX >= 0 && newX < tiles.length
+            && newY >= 0 && newY < tiles[0].length) {
+                if (tiles[newX][newY].equals(Tileset.CELL)) {
+                    livingNumber++;
+                }
+            }
+        }
+        return livingNumber;
     }
 
     /**
@@ -266,20 +308,34 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public void saveBoard() {
-        // TODO: Save the dimensions of the board into the first line of the file.
-        // TODO: The width and height should be separated by a space, and end with "\n".
+        String dimensions = width + " " + height + "\n";
+        String tiles = "";
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < width; y++) {
+                // 由于在saveBoard()中先进行了transpose 和 flip
+                // 所以需要用getCurrentTile()修正
+                if (getCurrentTile(currentState, x, y).equals(Tileset.NOTHING)) {
+                    tiles += "0";
+                } else {
+                    tiles += "1";
+                }
+            }
+            tiles += "\n";
+        }
+        writeFile(SAVE_FILE, dimensions + tiles);
+    }
 
-
-
-        // TODO: Save the current state of the board into save.txt. You should
-        // TODO: use the provided FileUtils functions to help you. Make sure
-        // TODO: the orientation is correct! Each line in the board should
-        // TODO: end with a new line character.
-
-
-
-
-
+    /**
+     * return the according tile in the origin tiles
+     * with coordinate change
+     * @param tiles
+     * @param x x of the tile in the changed tiles
+     * @param y y of the tile in the changed tiles
+     * @return
+     */
+    private TETile getCurrentTile(TETile[][] tiles, int x, int y) {
+        int width = tiles.length;
+        return tiles[y][width - x];
     }
 
     /**
@@ -287,25 +343,24 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public TETile[][] loadBoard(String filename) {
-        // TODO: Read in the file.
-
-        // TODO: Split the file based on the new line character.
-
-        // TODO: Grab and set the dimensions from the first line.
-
-        // TODO: Create a TETile[][] to load the board from the file into
-        // TODO: and any additional variables that you think might help.
-
-
-        // TODO: Load the state of the board from the given filename. You can
-        // TODO: use the provided builder variable to help you and FileUtils
-        // TODO: functions. Make sure the orientation is correct!
-
-
-
-
-        // TODO: Return the board you loaded. Replace/delete this line.
-        return null;
+        String total = readFile(filename);
+        String[] lines = total.split("\n");
+        String[] dimensions = lines[0].split(" ");
+        width = Integer.parseInt(dimensions[0]);
+        height = Integer.parseInt(dimensions[1]);
+        TETile[][] tiles = new TETile[height][width];
+        String line = "";
+        for (int x = 0; x < height; x++) {
+            line = lines[x + 1];
+            for (int y = 0; y < width; y++) {
+                if (line.charAt(y) == '1') {
+                    tiles[x][y] = Tileset.CELL;
+                } else {
+                    tiles[x][y] = Tileset.NOTHING;
+                }
+            }
+        }
+        return tiles;
     }
 
     /**

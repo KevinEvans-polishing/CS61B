@@ -226,4 +226,18 @@ public class GameOfLifeTests {
         List<String> contents = br.lines().toList();
         return String.join(delimiter, contents).hashCode();
     }
+
+    @Test
+    public void onlyNextLoad() throws IOException {
+      //  checkIfPatternFilesAreModified();
+        GameOfLife student = new GameOfLife(1234567, true);
+
+        TETile[][] result = new TETile[][] {
+                {Tileset.NOTHING, Tileset.NOTHING, Tileset.NOTHING, Tileset.CELL},
+                {Tileset.NOTHING, Tileset.NOTHING, Tileset.CELL, Tileset.NOTHING},
+                {Tileset.NOTHING, Tileset.CELL, Tileset.NOTHING, Tileset.NOTHING}
+        };
+        TETile[][] loadResult = student.loadBoard("./tests/testFiles/loadTest1.txt");
+        checkState(loadResult, result);
+    }
 }
