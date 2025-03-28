@@ -22,7 +22,10 @@ public class PoissonDiskSampling {
         List<Point> samples = new ArrayList<>();
 
         // 1. 选择一个随机的初始点
-        Point initialPoint = new Point((int)(random.nextDouble() * width), (int)(random.nextDouble() * height));
+        Point initialPoint;
+        do {
+            initialPoint = new Point((int) (random.nextDouble() * width), (int) (random.nextDouble() * height));
+        } while (!isValid(initialPoint, width, height, grid, gridWidth, gridHeight, cellSize, minDist, minRoomSize));
         activeList.add(initialPoint);
         samples.add(initialPoint);
         grid[(int) (initialPoint.x / cellSize)][(int) (initialPoint.y / cellSize)] = initialPoint;

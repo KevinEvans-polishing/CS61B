@@ -11,10 +11,10 @@ import static core.HallwayGenerator.createHallway;
 public class World {
     private int width;
     private int height;
-    private int seed;
+    private long seed;
     TETile[][] world;
 
-    public World(int width, int height, int seed) {
+    public World(int width, int height, long seed) {
         this.width = width;
         this.height = height;
         this.seed = seed;
