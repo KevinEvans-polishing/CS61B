@@ -22,7 +22,7 @@ BYOW（创建自己的世界）：要求生成一个2D世界，包括随机的�
 
 ### 1. 文件结构
 
-<img src="/Users/hector/Desktop/截屏2025-03-29 11.59.08.png" alt="截屏2025-03-29 11.59.08" style="zoom:50%;" />
+<img src="./fileStructure.png"  style="zoom:50%;"  alt="fileStructure"/>
 
 #### `core`
 
