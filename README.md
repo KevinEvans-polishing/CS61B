@@ -10,6 +10,8 @@
 
 思路，代码借鉴都会标注，未标注的全部为个人实现
 
+如果想要clone到本地运行的话，需要前往 https://github.com/Berkeley-CS61B/library-fa24 下载相应的jar包，并将其导入到项目结构中
+
 ​	📚 **HomeWork**
 
 ​	HW2：利用并查集模拟渗透问题（借鉴了 "https://github.com/InsideEmpire/CS61B-PathwayToSuccess.git" 处理“回流问题”的思路与代码，最终代码还是有点问题无法解决）
