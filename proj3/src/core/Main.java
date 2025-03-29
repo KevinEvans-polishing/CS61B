@@ -1,6 +1,7 @@
 package core;
 
 import core.gameLogic.Game;
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
 
@@ -39,8 +40,16 @@ public class Main {
                     seed = generateNewGameSeed();
                     break;
                 } else if (key == 'l' || key == 'L') {
-                    loadMode = true;
-                    break;
+                    In in = new In("./save.txt");
+                    if (in.hasNextLine()) {
+                        loadMode = true;
+                        break;
+                    } else {
+                        setPenColor(Color.YELLOW);
+                        setFont(new Font("Monaco", Font.BOLD, 30));
+                        text(0, 10, "You haven't saved yet!");
+                        show();
+                    }
                 } else if (key == 'q' || key == 'Q') {
                     System.exit(0);
                 } else {

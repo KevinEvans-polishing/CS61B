@@ -121,6 +121,11 @@ public class Game {
         String originalSeedString = "";
         if (in.hasNextLine()) {
             originalSeedString = in.readLine();
+        } else {
+            setPenColor(Color.YELLOW);
+            setFont(new Font("Monaco", Font.BOLD, 30));
+            text(0, 10, "Please enter N, L or Q!");
+            show();
         }
         long seed = Long.parseLong(originalSeedString);
 
