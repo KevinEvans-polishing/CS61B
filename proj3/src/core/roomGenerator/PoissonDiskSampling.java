@@ -1,18 +1,15 @@
-package core;
+package core.roomGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static core.Main.SEED;
-
 public class PoissonDiskSampling {
-    private static final Random random = new Random(SEED);
-
     // 生成 Poisson Disk 采样点
     public static List<Point> generateSamples(double width, double height,
                                               double minDist, int maxAttempts,
-                                              int minRoomSize) {
+                                              int minRoomSize, long seed) {
+        Random random = new Random(seed);
         double cellSize = minDist / Math.sqrt(2); // 计算网格单元大小
         int gridWidth = (int) Math.ceil(width / cellSize);
         int gridHeight = (int) Math.ceil(height / cellSize);
@@ -83,7 +80,7 @@ public class PoissonDiskSampling {
     }
 
     public static void main(String[] args) {
-        List<Point> points = generateSamples(60, 30, 10, 30, 10);
+        List<Point> points = generateSamples(60, 30, 10, 30, 10, 123);
         for (Point p : points) {
             System.out.println(p);
         }

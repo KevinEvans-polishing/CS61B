@@ -1,10 +1,10 @@
-package core;
+package core.roomGenerator;
 
 public class Room {
-    int x;
-    int y;
-    int width;
-    int height;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
 
     public Room(int x, int y, int width, int height) {
         this.x = x;

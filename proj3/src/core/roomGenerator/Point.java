@@ -1,4 +1,4 @@
-package core;
+package core.roomGenerator;
 
 public class Point {
     final int x ,y;

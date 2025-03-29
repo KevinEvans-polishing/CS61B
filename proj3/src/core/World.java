@@ -1,18 +1,23 @@
 package core;
 
+import core.gameLogic.Avatar;
+import core.hallwayGenerator.Edge;
+import core.roomGenerator.Room;
+import tileengine.TERenderer;
 import tileengine.TETile;
 import tileengine.Tileset;
 
 import java.util.List;
 
-import static core.DynamicRoomGenerator.generateRooms;
-import static core.HallwayGenerator.createHallway;
+import static core.roomGenerator.DynamicRoomGenerator.generateRooms;
+import static core.hallwayGenerator.HallwayGenerator.createHallway;
 
 public class World {
     private int width;
     private int height;
     private long seed;
-    TETile[][] world;
+    public TETile[][] world;
+    public Avatar avatar;
 
     public World(int width, int height, long seed) {
         this.width = width;
@@ -25,36 +30,73 @@ public class World {
                 world[i][j] = Tileset.NOTHING;
             }
         }
-
         // 生成Room
-        List<Room> rooms = generateRooms(width, height, 10, 5, 4, 7);
+        List<Room> rooms = generateRooms(width, height, 10, 5, 4, 7, seed);
         // 绘制Room
         for (Room room : rooms) {
-            for (int i = room.x; i < room.x + room.width; i++) {
-                world[i][room.y] = Tileset.WALL;
-                world[i][room.y + room.height - 1] = Tileset.WALL;
-            }
-            for (int i = room.y; i < room.y + room.height; i++) {
-                world[room.x][i] = Tileset.WALL;
-                world[room.x + room.width - 1][i] = Tileset.WALL;
-            }
-            for (int i = room.x + 1; i < room.x + room.width - 1; i++) {
-                for (int j = room.y + 1; j < room.y + room.height - 1; j++) {
-                    world[i][j] = Tileset.FLOOR;
-                }
-            }
+            drawRoom(room);
         }
-
         // 生成长廊
-        List<HallwayGenerator.Edge> hallWays = createHallway(rooms);
-
+        List<Edge> hallWays = createHallway(rooms);
         // 绘制Hallway
-        for (HallwayGenerator.Edge edge : hallWays) {
+        for (Edge edge : hallWays) {
             drawHallway(rooms.get(edge.index1), rooms.get(edge.index2));
         }
-
+        initAvatarAndDoor();
     }
 
+    private void initAvatarAndDoor() {
+        // 初始化avatar
+        avatar = null;
+        boolean flag = false;
+        for (int i = 0; i < world.length; i++) {
+            for (int j = 0; j < world[0].length; j++) {
+                if (world[i][j] == Tileset.FLOOR) {
+                    avatar = new Avatar(i, j, world);
+                    flag = true;
+                }
+                if (flag) {
+                    break;
+                }
+            }
+            if (flag) {
+                break;
+            }
+        }
+
+        flag = false;
+        // 放置通往下一关的入口
+        for (int i = world.length - 1; i >= 0; i--) {
+            for (int j = world[0].length - 1; j >= 0; j--) {
+                if (world[i][j].equals(Tileset.FLOOR)) {
+                    world[i][j] = Tileset.FLOWER;
+                    flag = true;
+                }
+                if (flag) {
+                    break;
+                }
+            }
+            if (flag) {
+                break;
+            }
+        }
+    }
+
+    private void drawRoom(Room room) {
+        for (int i = room.x; i < room.x + room.width; i++) {
+            world[i][room.y] = Tileset.WALL;
+            world[i][room.y + room.height - 1] = Tileset.WALL;
+        }
+        for (int i = room.y; i < room.y + room.height; i++) {
+            world[room.x][i] = Tileset.WALL;
+            world[room.x + room.width - 1][i] = Tileset.WALL;
+        }
+        for (int i = room.x + 1; i < room.x + room.width - 1; i++) {
+            for (int j = room.y + 1; j < room.y + room.height - 1; j++) {
+                world[i][j] = Tileset.FLOOR;
+            }
+        }
+    }
     private void drawHallway(Room r1, Room r2) {
         Room leftRoom;
         Room rightRoom;
@@ -101,4 +143,11 @@ public class World {
         }
     }
 
+
+    public static void main(String[] args) {
+        World world1 = new World(60, 30, 123);
+        TERenderer ter = new TERenderer();
+        ter.initialize(60, 30);
+        ter.renderFrame(world1.world);
+    }
 }

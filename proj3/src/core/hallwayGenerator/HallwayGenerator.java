@@ -1,5 +1,6 @@
-package core;
+package core.hallwayGenerator;
 
+import core.roomGenerator.Room;
 import dataStructure.UnionFind;
 
 import java.util.ArrayList;
@@ -7,18 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class HallwayGenerator {
-
-     public static class Edge {
-        int index1;
-        int index2;
-        double weight;
-
-        public Edge(int index1, int index2, double weight) {
-            this.index1 = index1;
-            this.weight = weight;
-            this.index2 = index2;
-        }
-    }
     // 返回最小生成树
     public static List<Edge> createHallway(List<Room> rooms) {
         List<Edge> edges = new ArrayList<>();

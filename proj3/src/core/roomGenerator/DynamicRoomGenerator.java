@@ -1,17 +1,15 @@
-package core;
+package core.roomGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static core.Main.SEED;
 
 public class DynamicRoomGenerator {
-    private static final Random random = new Random(SEED);
     // 生成房间
     public static List<Room> generateRooms(double width, double height, double minDist, int maxAttempts,
-                                           int minRoomSize, int maxRoomSize) {
-        List<Point> points = PoissonDiskSampling.generateSamples(width, height, minDist, maxAttempts, minRoomSize);
+                                           int minRoomSize, int maxRoomSize, long seed) {
+        List<Point> points = PoissonDiskSampling.generateSamples(width, height, minDist, maxAttempts, minRoomSize, seed);
         List<Room> rooms = new ArrayList<>();
 
         for (Point p : points) {
@@ -47,7 +45,7 @@ public class DynamicRoomGenerator {
 
     // 主函数
     public static void main(String[] args) {
-        List<Room> rooms = generateRooms(60, 30, 5, 2, 4, 15);
+        List<Room> rooms = generateRooms(60, 30, 5, 2, 4, 15, 123);
         for (Room r : rooms) {
             System.out.println(r);
         }
